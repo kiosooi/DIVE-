@@ -1,0 +1,103 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "DIVE !!! v2.0a script",
+   Icon = 0,
+   LoadingTitle = "Rayfield Interface Suite",
+   LoadingSubtitle = "by Sirius",
+   ShowText = "Rayfield",
+   Theme = "Default",
+
+   ToggleUIKeybind = "K",
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false,
+
+   ConfigurationSaving = {
+      Enabled = false,
+      FolderName = nil,
+      FileName = "Big Hub"
+   },
+
+   Discord = {
+      Enabled = false,
+      Invite = "noinvitelink",
+      RememberJoins = true
+   },
+
+   KeySystem = false,
+   KeySettings = {
+      Title = "Untitled",
+      Subtitle = "Key System",
+      Note = "No method of obtaining the key is provided",
+      FileName = "Key",
+      SaveKey = true,
+      GrabKeyFromSite = false,
+      Key = {"Hello"}
+   }
+})
+
+local Tab = Window:CreateTab("settings", 0)
+
+local Button = Tab:CreateButton({
+   Name = "inf stamina",
+   Callback = function()
+      while true do
+         local stamina = workspace:WaitForChild("ineverfly19"):WaitForChild("Stamina")
+         stamina.Value = 100
+         wait()
+      end
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "inf HP",
+   Callback = function()
+      while true do
+         local humanoid = workspace:WaitForChild("ineverfly19"):WaitForChild("Humanoid")
+         humanoid.MaxHealth = math.huge
+         humanoid.Health = math.huge
+         wait()
+      end
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Instant interact",
+   Callback = function()
+   loadstring(game:HttpGet("https://pastebin.com/raw/8PRS0f4t"))()-- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "No Fog",
+   Callback = function()
+      local Lighting = game:GetService("Lighting")
+      Lighting.FogEnd = 100000
+
+      for _, v in pairs(Lighting:GetDescendants()) do
+         if v:IsA("Atmosphere") then
+            v:Destroy()
+         end
+      end
+   end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Infinite yield",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()-- The function that takes place when the button is pressed
+   end,
+})
+
+local Button = Tab:CreateButton({
+    Name = "goto the end",
+    Callback = function()
+        local Exit = workspace.Sections.ShopArea:WaitForChild("Exit")
+
+        local player = game.Players.LocalPlayer
+        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = Exit.CFrame + Vector3.new(0, 3, 0)
+        end
+    end,
+})
