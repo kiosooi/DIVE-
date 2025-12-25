@@ -148,30 +148,40 @@ Tab:CreateToggle({
 
         if Value then
             AutoFarmThread = task.spawn(function()
+                local player = game.Players.LocalPlayer
+                local char = player.Character or player.CharacterAdded:Wait()
+                local hrp = char:WaitForChild("HumanoidRootPart")
+
                 while AutoFarmEnabled do
-                    local player = game.Players.LocalPlayer
-                    local char = player.Character or player.CharacterAdded:Wait()
-                    local hrp = char:WaitForChild("HumanoidRootPart")
-
-                    -- Pivot 2
-                    local pivot2Prompt = workspace.Sections.ShopArea.Selection2:GetChildren()[2]:FindFirstChildWhichIsA("ProximityPrompt")
-                    hrp.CFrame = pivot2Prompt.Parent.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(1)
-                    firePrompt(pivot2Prompt)
-
-                    -- Pivot 3
-                    local pivot3Prompt = workspace.Sections.ShopArea.Selection3:GetChildren()[2]:FindFirstChildWhichIsA("ProximityPrompt")
-                    hrp.CFrame = pivot3Prompt.Parent.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(1)
-                    firePrompt(pivot3Prompt)
-
-                    -- End button
-                    local endPrompt = workspace.Sections.ShopArea.Exit:FindFirstChildWhichIsA("ProximityPrompt", true)
-                    hrp.CFrame = workspace.Sections.ShopArea.Exit.CFrame + Vector3.new(0, 3, 0)
+                    -- === Step 1: Go to End button first ===
+                    local endPart = workspace.Sections.ShopArea:WaitForChild("Exit")
+                    local endPrompt = endPart:FindFirstChildWhichIsA("ProximityPrompt", true)
+                    hrp.CFrame = endPart.CFrame + Vector3.new(0,3,0)
                     task.wait(1)
                     firePrompt(endPrompt)
 
-                    task.wait(1) -- wait before repeating
+                    -- Wait for the map to generate before continuing
+                    task.wait(3)
+
+                    -- === Step 2: Pivot2 ===
+                    local pivot2Prompt = workspace.Sections.ShopArea.Selection2:GetChildren()[2]:FindFirstChildWhichIsA("ProximityPrompt")
+                    hrp.CFrame = pivot2Prompt.Parent.CFrame + Vector3.new(0,3,0)
+                    task.wait(1)
+                    firePrompt(pivot2Prompt)
+
+                    -- === Step 3: Pivot3 ===
+                    local pivot3Prompt = workspace.Sections.ShopArea.Selection3:GetChildren()[2]:FindFirstChildWhichIsA("ProximityPrompt")
+                    hrp.CFrame = pivot3Prompt.Parent.CFrame + Vector3.new(0,3,0)
+                    task.wait(1)
+                    firePrompt(pivot3Prompt)
+
+                    -- === Step 4: Return to End button ===
+                    hrp.CFrame = endPart.CFrame + Vector3.new(0,3,0)
+                    task.wait(1)
+                    firePrompt(endPrompt)
+
+                    -- Small delay before repeating
+                    task.wait(1)
                 end
             end)
         else
