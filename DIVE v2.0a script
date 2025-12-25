@@ -149,23 +149,25 @@ Tab:CreateToggle({
                     local pivot2 = workspace.Sections.ShopArea.Pivots2:GetChildren()[2]
                     hrp.CFrame = pivot2.CFrame + Vector3.new(0, 3, 0)
                     task.wait(1)
-                    firePrompt(pivot2, 1)
+                    spamPrompt(pivot2, 1)
 
                     -- === PIVOT 3 ===
                     local pivot3 = workspace.Sections.ShopArea.Pivots3:GetChildren()[2]
                     hrp.CFrame = pivot3.CFrame + Vector3.new(0, 3, 0)
                     task.wait(1)
-                    firePrompt(pivot3, 1)
+                    spamPrompt(pivot3, 1)
 
                     -- === EXIT ===
                     local exit = workspace.Sections.ShopArea.Exit
                     hrp.CFrame = exit.CFrame + Vector3.new(0, 3, 0)
                     task.wait(1)
-                    firePrompt(exit, 1)
+                    spamPrompt(exit, 1)
 
+                    -- LOOP DELAY
                     task.wait(0.5)
                 end
             end)
         end
     end
 })
+
