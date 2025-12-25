@@ -128,49 +128,60 @@ local Button = Tab:CreateButton({
     end,
 })
 
-local AutoFarm = false
-local AutoFarmConnection
+-- Auto Farm Toggle
+local AutoFarmEnabled = false
+local AutoFarmThread
 
 Tab:CreateToggle({
     Name = "Auto Farm",
     CurrentValue = false,
     Flag = "AutoFarm",
     Callback = function(Value)
-        AutoFarm = Value
+        AutoFarmEnabled = Value
 
-        if AutoFarm then
-            AutoFarmConnection = task.spawn(function()
-                while AutoFarm do
-                    local char = LocalPlayer.Character
-                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                    if not hrp then
-                        task.wait()
-                        continue
+        if Value then
+            AutoFarmThread = task.spawn(function()
+                while AutoFarmEnabled do
+                    local player = game.Players.LocalPlayer
+                    local char = player.Character or player.CharacterAdded:Wait()
+                    local hrp = char:WaitForChild("HumanoidRootPart")
+
+                    -- === PIVOTS 2 ===
+                    local pivot2 = workspace.Sections.ShopArea.Pivots2:GetChildren()[2]
+                    hrp.CFrame = pivot2.CFrame + Vector3.new(0, 3, 0)
+                    task.wait(0.25)
+
+                    local prompt2 = pivot2:FindFirstChildWhichIsA("ProximityPrompt", true)
+                    if prompt2 then
+                        fireproximityprompt(prompt2)
                     end
 
-                    -- teleport to end
-                    local Exit = workspace.Sections.ShopArea:WaitForChild("Exit")
-                    hrp.CFrame = Exit.CFrame + Vector3.new(0, 3, 0)
+                    -- === PIVOTS 3 ===
+                    local pivot3 = workspace.Sections.ShopArea.Pivots3:GetChildren()[2]
+                    hrp.CFrame = pivot3.CFrame + Vector3.new(0, 3, 0)
+                    task.wait(0.25)
 
-                    -- wait before interacting
-                    task.wait(1)
-
-                    -- press F (ProximityPrompt)
-                    for _, v in ipairs(Exit:GetDescendants()) do
-                        if v:IsA("ProximityPrompt") then
-                            fireproximityprompt(v)
-                            break
-                        end
+                    local prompt3 = pivot3:FindFirstChildWhichIsA("ProximityPrompt", true)
+                    if prompt3 then
+                        fireproximityprompt(prompt3)
                     end
 
-                    task.wait(1)
+                    -- === END / EXIT ===
+                    local exit = workspace.Sections.ShopArea.Exit
+                    hrp.CFrame = exit.CFrame + Vector3.new(0, 3, 0)
+                    task.wait(0.25)
+
+                    local exitPrompt = exit:FindFirstChildWhichIsA("ProximityPrompt", true)
+                    if exitPrompt then
+                        fireproximityprompt(exitPrompt)
+                    end
+
+                    -- repeat delay
+                    task.wait(0.5)
                 end
             end)
         else
-            if AutoFarmConnection then
-                task.cancel(AutoFarmConnection)
-                AutoFarmConnection = nil
-            end
+            AutoFarmEnabled = false
         end
     end
 })
