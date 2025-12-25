@@ -133,10 +133,11 @@ local AutoFarmThread
 
 local function spamPrompt(instance, duration)
     local start = tick()
-    while tick() - start < (duration or 1) do
-        local prompt = instance:FindFirstChildWhichIsA("ProximityPrompt", true)
-        if prompt then
-            fireproximityprompt(prompt)
+    while tick() - start < (duration or 0.5) do
+        for _, d in ipairs(instance:GetDescendants()) do
+            if d:IsA("ProximityPrompt") then
+                fireproximityprompt(d)
+            end
         end
         task.wait(0.05)
     end
@@ -159,21 +160,22 @@ Tab:CreateToggle({
                     -- === PIVOT 2 ===
                     local pivot2 = workspace.Sections.ShopArea.Pivots2:GetChildren()[2]
                     hrp.CFrame = pivot2.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(1)
-                    spamPrompt(pivot2, 1)
+                    task.wait(0.5)
+                    spamPrompt(pivot2, 0.5)
 
                     -- === PIVOT 3 ===
                     local pivot3 = workspace.Sections.ShopArea.Pivots3:GetChildren()[2]
                     hrp.CFrame = pivot3.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(1)
-                    spamPrompt(pivot3, 1)
+                    task.wait(0.5)
+                    spamPrompt(pivot3, 0.5)
 
                     -- === EXIT ===
                     local exit = workspace.Sections.ShopArea.Exit
                     hrp.CFrame = exit.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(1)
-                    spamPrompt(exit, 1)
+                    task.wait(0.5)
+                    spamPrompt(exit, 0.5)
 
+                    -- LOOP DELAY
                     task.wait(0.5)
                 end
             end)
