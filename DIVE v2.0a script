@@ -153,35 +153,35 @@ Tab:CreateToggle({
                 local hrp = char:WaitForChild("HumanoidRootPart")
 
                 while AutoFarmEnabled do
-                    -- === Step 1: Go to End button first ===
+                    -- === Step 1: Go to End button first to generate map ===
                     local endPart = workspace.Sections.ShopArea:WaitForChild("Exit")
                     local endPrompt = endPart:FindFirstChildWhichIsA("ProximityPrompt", true)
                     hrp.CFrame = endPart.CFrame + Vector3.new(0,3,0)
-                    task.wait(1)
+                    task.wait(0.3)
                     firePrompt(endPrompt)
 
-                    -- Wait for the map to generate before continuing
-                    task.wait(3)
+                    -- Small delay to let the map generate
+                    task.wait(0.3)
 
                     -- === Step 2: Pivot2 ===
                     local pivot2Prompt = workspace.Sections.ShopArea.Selection2:GetChildren()[2]:FindFirstChildWhichIsA("ProximityPrompt")
                     hrp.CFrame = pivot2Prompt.Parent.CFrame + Vector3.new(0,3,0)
-                    task.wait(1)
+                    task.wait(0.3)
                     firePrompt(pivot2Prompt)
 
                     -- === Step 3: Pivot3 ===
                     local pivot3Prompt = workspace.Sections.ShopArea.Selection3:GetChildren()[2]:FindFirstChildWhichIsA("ProximityPrompt")
                     hrp.CFrame = pivot3Prompt.Parent.CFrame + Vector3.new(0,3,0)
-                    task.wait(1)
+                    task.wait(0.3)
                     firePrompt(pivot3Prompt)
 
                     -- === Step 4: Return to End button ===
                     hrp.CFrame = endPart.CFrame + Vector3.new(0,3,0)
-                    task.wait(1)
+                    task.wait(0.3)
                     firePrompt(endPrompt)
 
                     -- Small delay before repeating
-                    task.wait(1)
+                    task.wait(0.3)
                 end
             end)
         else
