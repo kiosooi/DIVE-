@@ -128,7 +128,6 @@ local Button = Tab:CreateButton({
     end,
 })
 
--- Auto Farm Toggle
 local AutoFarmEnabled = false
 local AutoFarmThread
 
@@ -146,42 +145,24 @@ Tab:CreateToggle({
                     local char = player.Character or player.CharacterAdded:Wait()
                     local hrp = char:WaitForChild("HumanoidRootPart")
 
-                    -- === PIVOTS 2 ===
+                    -- === PIVOT 2 ===
                     local pivot2 = workspace.Sections.ShopArea.Pivots2:GetChildren()[2]
                     hrp.CFrame = pivot2.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(0.5)
+                    firePromptFrom(pivot2, 3)
 
-                    local prompt2 = pivot2:FindFirstChildWhichIsA("ProximityPrompt", true)
-                    if prompt2 then
-                        fireproximityprompt(prompt2)
-                    end
-
-                    -- === PIVOTS 3 ===
+                    -- === PIVOT 3 ===
                     local pivot3 = workspace.Sections.ShopArea.Pivots3:GetChildren()[2]
                     hrp.CFrame = pivot3.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(0.5)
+                    firePromptFrom(pivot3, 3)
 
-                    local prompt3 = pivot3:FindFirstChildWhichIsA("ProximityPrompt", true)
-                    if prompt3 then
-                        fireproximityprompt(prompt3)
-                    end
-
-                    -- === END / EXIT ===
+                    -- === EXIT ===
                     local exit = workspace.Sections.ShopArea.Exit
                     hrp.CFrame = exit.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(0.5)
+                    firePromptFrom(exit, 3)
 
-                    local exitPrompt = exit:FindFirstChildWhichIsA("ProximityPrompt", true)
-                    if exitPrompt then
-                        fireproximityprompt(exitPrompt)
-                    end
-
-                    -- repeat delay
                     task.wait(0.5)
                 end
             end)
-        else
-            AutoFarmEnabled = false
         end
     end
 })
