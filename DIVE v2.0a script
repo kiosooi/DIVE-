@@ -127,3 +127,65 @@ local Button = Tab:CreateButton({
         end
     end,
 })
+
+local AutoFarmEnabled = false
+local AutoFarmThread
+
+Tab:CreateToggle({
+    Name = "Auto Farm",
+    CurrentValue = false,
+    Flag = "AutoFarm",
+    Callback = function(Value)
+        AutoFarmEnabled = Value
+
+        if Value then
+            AutoFarmThread = task.spawn(function()
+                while AutoFarmEnabled do
+                    local player = game.Players.LocalPlayer
+                    local char = player.Character or player.CharacterAdded:Wait()
+                    local hrp = char:WaitForChild("HumanoidRootPart")
+
+                    -- === END BUTTON FIRST ===
+                    local exit = workspace.Sections.ShopArea.Exit
+                    hrp.CFrame = exit.CFrame + Vector3.new(0, 3, 0)
+                    task.wait(1)
+                    local exitPrompt = exit:FindFirstChildWhichIsA("ProximityPrompt", true)
+                    if exitPrompt then
+                        exitPrompt:InputHoldBegin(Enum.KeyCode.F)
+                        task.wait(0.1)
+                        exitPrompt:InputHoldEnd(Enum.KeyCode.F)
+                    end
+
+                    -- === PIVOT 2 ===
+                    local pivot2 = workspace.Sections.ShopArea.Pivots2:GetChildren()[2]
+                    hrp.CFrame = pivot2.CFrame + Vector3.new(0, 3, 0)
+                    task.wait(1)
+                    local pivot2Prompt = pivot2:FindFirstChildWhichIsA("ProximityPrompt", true)
+                    if pivot2Prompt then
+                        pivot2Prompt:InputHoldBegin(Enum.KeyCode.F)
+                        task.wait(0.1)
+                        pivot2Prompt:InputHoldEnd(Enum.KeyCode.F)
+                    end
+
+                    -- === PIVOT 3 ===
+                    local pivot3 = workspace.Sections.ShopArea.Pivots3:GetChildren()[2]
+                    hrp.CFrame = pivot3.CFrame + Vector3.new(0, 3, 0)
+                    task.wait(1)
+                    local pivot3Prompt = pivot3:FindFirstChildWhichIsA("ProximityPrompt", true)
+                    if pivot3Prompt then
+                        pivot3Prompt:InputHoldBegin(Enum.KeyCode.F)
+                        task.wait(0.1)
+                        pivot3Prompt:InputHoldEnd(Enum.KeyCode.F)
+                    end
+
+                    task.wait(1) -- wait before repeating loop
+                end
+            end)
+        else
+            if AutoFarmThread then
+                task.cancel(AutoFarmThread)
+                AutoFarmThread = nil
+            end
+        end
+    end
+})
