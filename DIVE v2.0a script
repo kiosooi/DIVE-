@@ -131,18 +131,6 @@ local Button = Tab:CreateButton({
 local AutoFarmEnabled = false
 local AutoFarmThread
 
-local function spamPrompt(instance, duration)
-    local start = tick()
-    while tick() - start < (duration or 0.5) do
-        for _, d in ipairs(instance:GetDescendants()) do
-            if d:IsA("ProximityPrompt") then
-                fireproximityprompt(d)
-            end
-        end
-        task.wait(0.05)
-    end
-end
-
 Tab:CreateToggle({
     Name = "Auto Farm",
     CurrentValue = false,
@@ -160,22 +148,21 @@ Tab:CreateToggle({
                     -- === PIVOT 2 ===
                     local pivot2 = workspace.Sections.ShopArea.Pivots2:GetChildren()[2]
                     hrp.CFrame = pivot2.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(0.5)
-                    spamPrompt(pivot2, 0.5)
+                    task.wait(1)
+                    firePrompt(pivot2, 1)
 
                     -- === PIVOT 3 ===
                     local pivot3 = workspace.Sections.ShopArea.Pivots3:GetChildren()[2]
                     hrp.CFrame = pivot3.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(0.5)
-                    spamPrompt(pivot3, 0.5)
+                    task.wait(1)
+                    firePrompt(pivot3, 1)
 
                     -- === EXIT ===
                     local exit = workspace.Sections.ShopArea.Exit
                     hrp.CFrame = exit.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(0.5)
-                    spamPrompt(exit, 0.5)
+                    task.wait(1)
+                    firePrompt(exit, 1)
 
-                    -- LOOP DELAY
                     task.wait(0.5)
                 end
             end)
