@@ -152,36 +152,40 @@ Tab:CreateToggle({
                 local char = player.Character or player.CharacterAdded:Wait()
                 local hrp = char:WaitForChild("HumanoidRootPart")
 
+                local roundValue = workspace:WaitForChild("Round")
+
                 while AutoFarmEnabled do
-                    -- === Step 1: Go to End button first to generate map ===
+                    -- === Step 1: Go to End button to start map ===
                     local endPart = workspace.Sections.ShopArea:WaitForChild("Exit")
                     local endPrompt = endPart:FindFirstChildWhichIsA("ProximityPrompt", true)
                     hrp.CFrame = endPart.CFrame + Vector3.new(0,3,0)
-                    task.wait(0.3)
+                    task.wait(0.5)
                     firePrompt(endPrompt)
 
-                    -- Small delay to let the map generate
-                    task.wait(0.3)
+                    -- === Step 2: Wait for the round to start (map generated) ===
+                    repeat
+                        task.wait(0.2)
+                    until roundValue.Value == true
 
-                    -- === Step 2: Pivot2 ===
+                    -- === Step 3: Pivot2 ===
                     local pivot2Prompt = workspace.Sections.ShopArea.Selection2:GetChildren()[2]:FindFirstChildWhichIsA("ProximityPrompt")
                     hrp.CFrame = pivot2Prompt.Parent.CFrame + Vector3.new(0,3,0)
-                    task.wait(0.3)
+                    task.wait(0.5)
                     firePrompt(pivot2Prompt)
 
-                    -- === Step 3: Pivot3 ===
+                    -- === Step 4: Pivot3 ===
                     local pivot3Prompt = workspace.Sections.ShopArea.Selection3:GetChildren()[2]:FindFirstChildWhichIsA("ProximityPrompt")
                     hrp.CFrame = pivot3Prompt.Parent.CFrame + Vector3.new(0,3,0)
-                    task.wait(0.3)
+                    task.wait(0.5)
                     firePrompt(pivot3Prompt)
 
-                    -- === Step 4: Return to End button ===
+                    -- === Step 5: Return to End button ===
                     hrp.CFrame = endPart.CFrame + Vector3.new(0,3,0)
-                    task.wait(0.3)
+                    task.wait(0.5)
                     firePrompt(endPrompt)
 
                     -- Small delay before repeating
-                    task.wait(0.3)
+                    task.wait(0.5)
                 end
             end)
         else
@@ -192,3 +196,4 @@ Tab:CreateToggle({
         end
     end
 })
+
