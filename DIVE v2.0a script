@@ -149,7 +149,7 @@ Tab:CreateToggle({
                     -- === PIVOTS 2 ===
                     local pivot2 = workspace.Sections.ShopArea.Pivots2:GetChildren()[2]
                     hrp.CFrame = pivot2.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(0.25)
+                    task.wait(0.5)
 
                     local prompt2 = pivot2:FindFirstChildWhichIsA("ProximityPrompt", true)
                     if prompt2 then
@@ -159,7 +159,7 @@ Tab:CreateToggle({
                     -- === PIVOTS 3 ===
                     local pivot3 = workspace.Sections.ShopArea.Pivots3:GetChildren()[2]
                     hrp.CFrame = pivot3.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(0.25)
+                    task.wait(0.5)
 
                     local prompt3 = pivot3:FindFirstChildWhichIsA("ProximityPrompt", true)
                     if prompt3 then
@@ -169,7 +169,7 @@ Tab:CreateToggle({
                     -- === END / EXIT ===
                     local exit = workspace.Sections.ShopArea.Exit
                     hrp.CFrame = exit.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(0.25)
+                    task.wait(0.5)
 
                     local exitPrompt = exit:FindFirstChildWhichIsA("ProximityPrompt", true)
                     if exitPrompt then
