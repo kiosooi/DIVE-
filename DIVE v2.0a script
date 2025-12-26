@@ -128,13 +128,17 @@ local Button = Tab:CreateButton({
     end,
 })
 
+-- ===== AUTO FARM =====
+
 local AutoFarmEnabled = false
 local AutoFarmThread
 
-local function firePrompt(prompt)
-    if prompt then
-        fireproximityprompt(prompt)
-    end
+-- helper: safely fire proximity prompt
+local function usePrompt(prompt)
+    if not prompt then return end
+    prompt.HoldDuration = 0
+    task.wait(0.1)
+    fireproximityprompt(prompt, 0)
 end
 
 Tab:CreateToggle({
@@ -146,53 +150,54 @@ Tab:CreateToggle({
 
         if Value then
             AutoFarmThread = task.spawn(function()
-                local player = game.Players.LocalPlayer
+                local player = game:GetService("Players").LocalPlayer
 
                 while AutoFarmEnabled do
-                    -- Wait for round to start
-                    repeat task.wait(0.3) until workspace:WaitForChild("Round").Value == true
                     local char = player.Character or player.CharacterAdded:Wait()
                     local hrp = char:WaitForChild("HumanoidRootPart")
 
-                    -- === End Button ===
-                    local endBtn
-                    repeat
-                        endBtn = workspace.Sections.ShopArea:FindFirstChild("Exit")
+                    local Round = workspace:WaitForChild("Round")
+
+                    -- ===== WAIT FOR SHOP (round ended) =====
+                    while AutoFarmEnabled and Round.Value == true do
                         task.wait(0.3)
-                    until endBtn
-                    hrp.CFrame = endBtn.CFrame + Vector3.new(0,3,0)
-                    firePrompt(endBtn:FindFirstChildWhichIsA("ProximityPrompt", true))
-                    task.wait(0.5)
+                    end
+                    if not AutoFarmEnabled then break end
 
-                    -- === Pivot 2 ===
-                    local pivot2Part
-                    repeat
-                        pivot2Part = workspace.Sections.ShopArea.Selection2:GetChildren()[2]
+                    -- ===== END BUTTON (START ROUND) =====
+                    local exit = workspace.Sections.ShopArea:WaitForChild("Exit")
+                    hrp.CFrame = exit.CFrame + Vector3.new(0, 3, 0)
+                    task.wait(0.5)
+                    usePrompt(exit:FindFirstChildWhichIsA("ProximityPrompt", true))
+
+                    -- ===== WAIT FOR MAP GENERATION =====
+                    while AutoFarmEnabled and Round.Value == false do
                         task.wait(0.3)
-                    until pivot2Part
-                    hrp.CFrame = pivot2Part.CFrame + Vector3.new(0,3,0)
-                    firePrompt(pivot2Part:FindFirstChildWhichIsA("ProximityPrompt", true))
+                    end
+                    if not AutoFarmEnabled then break end
+
+                    -- ===== PIVOT 2 =====
+                    local sel2 = workspace.Sections.ShopArea.Selection2:GetChildren()[2]
+                    hrp.CFrame = sel2.CFrame + Vector3.new(0, 3, 0)
+                    task.wait(0.5)
+                    usePrompt(sel2:FindFirstChild("ProximityPrompt"))
+
+                    -- ===== PIVOT 3 =====
+                    local sel3 = workspace.Sections.ShopArea.Selection3:GetChildren()[2]
+                    hrp.CFrame = sel3.CFrame + Vector3.new(0, 3, 0)
+                    task.wait(0.5)
+                    usePrompt(sel3:FindFirstChild("ProximityPrompt"))
+
+                    -- ===== BACK TO END =====
+                    hrp.CFrame = exit.CFrame + Vector3.new(0, 3, 0)
                     task.wait(0.5)
 
-                    -- === Pivot 3 ===
-                    local pivot3Part
-                    repeat
-                        pivot3Part = workspace.Sections.ShopArea.Selection3:GetChildren()[2]
-                        task.wait(0.3)
-                    until pivot3Part
-                    hrp.CFrame = pivot3Part.CFrame + Vector3.new(0,3,0)
-                    firePrompt(pivot3Part:FindFirstChildWhichIsA("ProximityPrompt", true))
+                    -- short pause before looping
                     task.wait(0.5)
-
-                    -- === Back to End Button ===
-                    hrp.CFrame = endBtn.CFrame + Vector3.new(0,3,0)
-                    firePrompt(endBtn:FindFirstChildWhichIsA("ProximityPrompt", true))
-                    task.wait(0.5)
-
-                    -- Wait for round to end before next iteration
-                    repeat task.wait(0.3) until workspace.Round.Value == false
                 end
             end)
+        else
+            AutoFarmEnabled = false
         end
     end
 })
