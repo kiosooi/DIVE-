@@ -128,17 +128,30 @@ local Button = Tab:CreateButton({
     end,
 })
 
--- ===== AUTO FARM =====
-
 local AutoFarmEnabled = false
 local AutoFarmThread
 
--- helper: safely fire proximity prompt
-local function usePrompt(prompt)
+-- safely fires a proximity prompt for a short time
+local function firePromptSafe(prompt, duration)
     if not prompt then return end
-    prompt.HoldDuration = 0
-    task.wait(0.1)
-    fireproximityprompt(prompt, 0)
+
+    local start = tick()
+    while tick() - start < (duration or 1) do
+        pcall(function()
+            fireproximityprompt(prompt)
+        end)
+        task.wait(0.1)
+    end
+end
+
+-- teleports + waits + fires prompt
+local function tpAndPrompt(cf, prompt, waitTime)
+    local char = player.Character or player.CharacterAdded:Wait()
+    local hrp = char:WaitForChild("HumanoidRootPart")
+
+    hrp.CFrame = cf + Vector3.new(0, 3, 0)
+    task.wait(waitTime or 0.7)
+    firePromptSafe(prompt, 0.8)
 end
 
 Tab:CreateToggle({
@@ -150,54 +163,63 @@ Tab:CreateToggle({
 
         if Value then
             AutoFarmThread = task.spawn(function()
-                local player = game:GetService("Players").LocalPlayer
-
                 while AutoFarmEnabled do
-                    local char = player.Character or player.CharacterAdded:Wait()
-                    local hrp = char:WaitForChild("HumanoidRootPart")
-
                     local Round = workspace:WaitForChild("Round")
 
-                    -- ===== WAIT FOR SHOP (round ended) =====
-                    while AutoFarmEnabled and Round.Value == true do
-                        task.wait(0.3)
+                    -- === WAIT FOR ROUND TO START ===
+                    while AutoFarmEnabled and not Round.Value do
+                        task.wait(0.2)
                     end
                     if not AutoFarmEnabled then break end
 
-                    -- ===== END BUTTON (START ROUND) =====
+                    -- let everything load
+                    task.wait(0.7)
+
+                    -- === END BUTTON (START MAP) ===
                     local exit = workspace.Sections.ShopArea:WaitForChild("Exit")
-                    hrp.CFrame = exit.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(0.5)
-                    usePrompt(exit:FindFirstChildWhichIsA("ProximityPrompt", true))
+                    local exitPrompt = exit:FindFirstChildWhichIsA("ProximityPrompt", true)
 
-                    -- ===== WAIT FOR MAP GENERATION =====
-                    while AutoFarmEnabled and Round.Value == false do
-                        task.wait(0.3)
+                    tpAndPrompt(exit.CFrame, exitPrompt, 0.7)
+
+                    -- === WAIT FOR MAP FREEZE TO END ===
+                    task.wait(0.7)
+
+                    -- === PIVOT 2 ===
+                    local pivot2Part = workspace.Sections.ShopArea.Pivots2:GetChildren()[2]
+                    local pivot2Prompt =
+                        workspace.Sections.ShopArea.Selection2:GetChildren()[2]:FindFirstChild("ProximityPrompt")
+
+                    if pivot2Part and pivot2Prompt then
+                        tpAndPrompt(pivot2Part.CFrame, pivot2Prompt, 0.7)
                     end
-                    if not AutoFarmEnabled then break end
 
-                    -- ===== PIVOT 2 =====
-                    local sel2 = workspace.Sections.ShopArea.Selection2:GetChildren()[2]
-                    hrp.CFrame = sel2.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(0.5)
-                    usePrompt(sel2:FindFirstChild("ProximityPrompt"))
+                    -- === PIVOT 3 (MAY NOT EXIST) ===
+                    task.wait(0.7)
 
-                    -- ===== PIVOT 3 =====
-                    local sel3 = workspace.Sections.ShopArea.Selection3:GetChildren()[2]
-                    hrp.CFrame = sel3.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(0.5)
-                    usePrompt(sel3:FindFirstChild("ProximityPrompt"))
+                    local pivots3 = workspace.Sections.ShopArea:FindFirstChild("Pivots3")
+                    local selection3 = workspace.Sections.ShopArea:FindFirstChild("Selection3")
 
-                    -- ===== BACK TO END =====
-                    hrp.CFrame = exit.CFrame + Vector3.new(0, 3, 0)
-                    task.wait(0.5)
+                    if pivots3 and selection3 then
+                        local pivot3Part = pivots3:GetChildren()[2]
+                        local pivot3Prompt = selection3:GetChildren()[2]:FindFirstChild("ProximityPrompt")
 
-                    -- short pause before looping
-                    task.wait(0.5)
+                        if pivot3Part and pivot3Prompt then
+                            tpAndPrompt(pivot3Part.CFrame, pivot3Prompt, 0.7)
+                        end
+                    end
+
+                    -- === BACK TO END ===
+                    task.wait(0.7)
+                    tpAndPrompt(exit.CFrame, exitPrompt, 0.7)
+
+                    -- === WAIT FOR ROUND TO END ===
+                    while AutoFarmEnabled and Round.Value do
+                        task.wait(0.2)
+                    end
+
+                    task.wait(0.7)
                 end
             end)
-        else
-            AutoFarmEnabled = false
         end
     end
 })
